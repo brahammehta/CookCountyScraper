@@ -1,0 +1,40 @@
+Public Function replace_this(str As String)
+    replace_this = Replace(str, " ", "")
+End Function
+
+Public Sub GetAssessed()
+Dim i As Integer
+
+Application.ScreenUpdating = False
+Application.Calculation = xlCalculationManual
+
+For i = 2 To 29611
+    Application.StatusBar = "Updating Record Number" & i
+    ThisWorkbook.Worksheets("Data Pull").Range("A1").QueryTable.Connection = createnewURL(i)
+    
+'Refresh Workbook
+    ThisWorkbook.RefreshAll
+    
+
+'Pull Total Assessed Value from 2012
+   For y = 1 To 300
+        If Worksheets("Data Pull").Cells(y, 1) = "Total Assessed Value" Then
+                Worksheets("Data Push").Cells(i, 4).Value = Worksheets("Data Pull").Cells(y, 4).Value
+        End If
+    Next y
+    
+    
+    
+Next i
+Application.StatusBar = False
+Application.ScreenUpdating = True
+Application.Calculation = xlCalculationAutomatic
+End Sub
+
+Function createnewURL(i As Integer) As String
+    Dim temp As String
+    
+    temp = "URL;http://www.cookcountyassessor.com/Property_Search/Property_Details.aspx?Pin=" & Worksheets("Data Push").Cells(i, 3)
+    createnewURL = temp
+End Function
+
