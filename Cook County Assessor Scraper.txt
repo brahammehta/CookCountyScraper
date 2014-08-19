@@ -1,29 +1,74 @@
-Public Function replace_this(str As String)
-    replace_this = Replace(str, " ", "")
-End Function
-
-Public Sub GetAssessed()
+Public Sub LookupProperties()
 Dim i As Integer
 
 Application.ScreenUpdating = False
 Application.Calculation = xlCalculationManual
 
-For i = 2 To 29611
+For i = 2 To 784
     Application.StatusBar = "Updating Record Number" & i
+
     ThisWorkbook.Worksheets("Data Pull").Range("A1").QueryTable.Connection = createnewURL(i)
-    
-'Refresh Workbook
+
     ThisWorkbook.RefreshAll
     
-
-'Pull Total Assessed Value from 2012
-   For y = 1 To 300
+    Worksheets("Data Push").Cells(i, 9).Value = Worksheets("Sheet5").Cells(i, 1).Value 'PIN'
+    Worksheets("Data Push").Cells(i, 1).Value = Worksheets("Data Pull").Range("C32").Value 'Market Value'
+    Worksheets("Data Push").Cells(i, 3).Value = Worksheets("Data Pull").Range("B22").Value 'Class'
+    
+    If Worksheets("Data Pull").Range("C39").Value = Null Then
+        Worksheets("Data Push").Cells(i, 4).Value = "N/A"
+    Else
+            Worksheets("Data Push").Cells(i, 4).Value = Worksheets("Data Pull").Range("C39").Value 'Full Bath'
+    End If
+    
+    
+    If Worksheets("Data Pull").Range("C40").Value = Null Then
+        Worksheets("Data Push").Cells(i, 5).Value = "N/A"
+    Else
+        Worksheets("Data Push").Cells(i, 5).Value = Worksheets("Data Pull").Range("C40").Value 'Half Bath'
+    End If
+    
+    If Worksheets("Data Pull").Range("C45").Value = Null Then
+        Worksheets("Data Push").Cells(i, 6).Value = "N/A"
+    Else
+        Worksheets("Data Push").Cells(i, 6).Value = Worksheets("Data Pull").Range("C45").Value 'Garage'
+    End If
+    
+    If Worksheets("Data Pull").Range("C41").Value = Null Then
+        Worksheets("Data Push").Cells(i, 7).Value = "N/A"
+    Else
+        Worksheets("Data Push").Cells(i, 7).Value = Worksheets("Data Pull").Range("C41").Value 'Basement'
+    End If
+    
+    If Worksheets("Data Pull").Range("C46").Value = Null Then
+        Worksheets("Data Push").Cells(i, 8).Value = "N/A"
+    End If
+    
+    If Worksheets("Data Pull").Range("C46").Value = Null Then
+        Worksheets("Data Push").Cells(i, 8).Value = "N/A"
+    Else
+        Worksheets("Data Push").Cells(i, 8).Value = Worksheets("Data Pull").Range("C46").Value 'Age'
+    End If
+    
+    For Z = 1 To 50
+        If Worksheets("Data Pull").Cells(Z, 1) = "Age:" Then
+            If Worksheets("Data Pull").Cells(Z, 2).Value = 0 Then
+                Worksheets("Data Push").Cells(i, 8).Value = Worksheets("Data Pull").Cells(Z, 3).Value 'Age'
+            Else
+                Worksheets("Data Push").Cells(i, 8).Value = Worksheets("Data Pull").Cells(Z, 2).Value 'Age'
+            End If
+        End If
+    Next Z
+    
+    For y = 1 To 50
         If Worksheets("Data Pull").Cells(y, 1) = "Total Assessed Value" Then
-                Worksheets("Data Push").Cells(i, 4).Value = Worksheets("Data Pull").Cells(y, 4).Value
+            If Worksheets("Data Pull").Cells(y, 2).Value = 0 Then
+                Worksheets("Data Push").Cells(i, 2).Value = Worksheets("Data Pull").Cells(y, 3).Value 'Assessed Value'
+            Else
+                Worksheets("Data Push").Cells(i, 2).Value = Worksheets("Data Pull").Cells(y, 2).Value
+            End If
         End If
     Next y
-    
-    
     
 Next i
 Application.StatusBar = False
@@ -34,7 +79,8 @@ End Sub
 Function createnewURL(i As Integer) As String
     Dim temp As String
     
-    temp = "URL;http://www.cookcountyassessor.com/Property_Search/Property_Details.aspx?Pin=" & Worksheets("Data Push").Cells(i, 3)
+    temp = "URL;http://www.cookcountyassessor.com/Property_Search/Property_Details.aspx?Pin=" & Worksheets("Sheet5").Cells(i, 2)
     createnewURL = temp
 End Function
+
 
